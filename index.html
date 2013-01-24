@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>CricScore</title>
+    <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.2.2/css/bootstrap-combined.min.css"
+        rel="stylesheet" />
+</head>
+    <body ng-app="myApp">
+        <script type="text/ng-template" id="/players.html">
+        <div class="well">
+            <ul class="nav nav-pills nav-stacked" ng-repeat="p in players">
+            <li>
+                <a href="#player/{{p.id}}" > {{p.shirt}}) {{p.first }} {{p.last}} <button class="btn btn-primary pull-right" type="button">></button></a>
+            </li>
+            </ul>
+        </div>
+    </script>
+        <script type="text/ng-template" id="/player.html">
+    <form class="form-horizontal" ng-submit="updatePlayer()">
+      <div class="control-group">
+        <label class="control-label" for="first">First</label>
+        <div class="controls">
+          <input type="text" ng-model="player.first" placeholder="First Name">
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label" for="last">Last</label>
+        <div class="controls">
+          <input type="text" ng-model="player.last" placeholder="Last Name">
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label" for="shirt">Shirt</label>
+        <div class="controls">
+          <input type="text" ng-model="player.shirt" placeholder="Shirt Number">
+        </div>
+      </div>
+      <div class="control-group">
+        <div class="controls">
+          
+          <button type="submit" class="btn">Save</button>
+        </div>
+      </div>
+    </form>
+    
+    </script>
+        <script type="text/ng-template" id="/matches.html">
+    m
+    </script>
+        <script type="text/ng-template" id="/stats.html">
+    s
+    </script>
+        <div class="navbar" bs-navbar>
+            <div class="navbar-inner">
+                <a class="brand" href="#">CricScore</a>
+                <ul class="nav">
+                    <li data-match-route="/"><a href="#">Players</a></li>
+                    <li data-match-route="/matches"><a href="#matches">Matches</a></li>
+                    <li data-match-route="/stats"><a href="#stats">Stats</a></li>
+                </ul>
+            </div>
+        </div>
+        <div ng-view>
+        </div>
+    </body>
+    <script type="text/javascript" src="//ajax.cdnjs.com/ajax/libs/json2/20110223/json2.js"></script>
+<script type="text/javascript" src="//code.jquery.com/jquery-latest.js"></script>
+<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/angularjs/1.0.4/angular.min.js"></script>
+<script type="text/javascript" src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.2.2/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="//raw.github.com/mgcrea/angular-strap/master/dist/angular-strap.min.js"></script>
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.3/underscore-min.js"></script>
+<script type='text/javascript'>
+
+    var players = JSON.parse(localStorage.getItem('players'));// [{ id: 1, first: "Neil", last: "kerkin", shirt: "27" }, { id: 0, first: "asdf", last: "sdf", shirt: "9"}];
+
+    var myApp = angular.module('myApp', [], function ($routeProvider, $locationProvider) {
+        $routeProvider
+                .when('/', { templateUrl: '/players.html', controller: PlayersCtrl })
+                .when('/player/:id', { templateUrl: '/player.html', controller: PlayerCtrl })
+                .when('/matches', { templateUrl: '/matches.html' })
+                .when('/stats', { templateUrl: '/stats.html' })
+                ;
+    });
+
+    function PlayersCtrl($scope) {
+        $scope.players = players;
+    }
+    function PlayerCtrl($scope, $routeParams, $location) {
+
+        $scope.player = _.chain(players).where({ id: parseInt($routeParams.id) }).first().value();
+        $scope.updatePlayer = function () {
+            for (var x = 0; x < players.length; x++) {
+                if (players[x].id == this.player.id) {
+                    players[x] = this.player;
+                    break;
+                }
+            }
+            localStorage.setItem('players', JSON.stringify(players));
+            $location.path("/");
+        };
+    }
+
+</script>
+</html>
